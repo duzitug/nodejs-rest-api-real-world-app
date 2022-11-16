@@ -3,6 +3,7 @@ const { User } = require("../models");
 
 async function verifyToken(req, res, next) {
   try {
+    const { headers } = req;
     const token = headers.authorization.split(" ")[1];
 
     const userVerified = await jwtVerify(token);
@@ -16,7 +17,9 @@ async function verifyToken(req, res, next) {
     req.loggedUser.dataValues.token = token;
 
     next();
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 module.exports = verifyToken;
