@@ -26,6 +26,24 @@ class UsersController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  static async signIn(req, res, next) {
+    try {
+      const { user } = req.body;
+
+      const existentUser = await User.findOne({ where: { email: user.email } });
+      // lançar exceção caso o usuário já exista
+
+      const pwd = await bcryptCompare(user.password, existentUser.password);
+      // lançar exceção caso o pasword esteja incorreto
+
+      existentUser.dataValues.token = await jwtSign(user);
+
+      res.json({ user: existentUser });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = UsersController;
