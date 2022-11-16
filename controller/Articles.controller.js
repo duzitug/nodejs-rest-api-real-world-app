@@ -3,6 +3,11 @@ const { slugify } = require("../helper/util.js");
 const { Article, Tag, User } = require("../models");
 
 class ArticlesController {
+  static includeOptions = [
+    { model: Tag, as: "tagList", attributes: ["name"] },
+    { model: User, as: "author", attributes: { exclude: ["email"] } },
+  ];
+
   static async allArticles(req, res, next) {
     try {
       const { loggedUser } = req;
@@ -59,6 +64,23 @@ class ArticlesController {
       article.dataValues.author = loggedUser;
 
       res.status(201).json({ article });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async singleArticleBySlug(req, res, next) {
+    try {
+      const { loggedUser } = req;
+
+      const { slug } = req.params;
+
+      const article = await Article.findOne({
+        where: { slug: slug },
+        include: ArticlesController.includeOptions,
+      });
+
+      res.json({ article });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
