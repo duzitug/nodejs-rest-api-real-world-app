@@ -85,6 +85,48 @@ class ArticlesController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  static async updateBySlug(req, res, next) {
+    try {
+      const { slug } = req.params;
+
+      const article = await Article.findOne({
+        where: { slug: slug },
+        include: ArticlesController.includeOptions,
+      });
+
+      const { title, description, body } = req.body.article;
+
+      if (title) {
+        article.slug = slugify(title);
+        article.title = title;
+      }
+      if (description) article.description = description;
+      if (body) article.body = body;
+      await article.save();
+
+      res.json({ article });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async deleteBySlug(req, res, next) {
+    try {
+      const { slug } = req.params;
+
+      const article = await Article.findOne({
+        where: { slug: slug },
+        include: ArticlesController.includeOptions,
+      });
+
+      await article.destroy();
+
+      res.json({ message: { body: ["Article deleted successfully"] } });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = ArticlesController;
