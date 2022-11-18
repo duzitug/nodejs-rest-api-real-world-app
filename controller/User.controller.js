@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User } = require("../model");
 const { jwtSign } = require("../helper/jwt");
 const { bcryptHash, bcryptCompare } = require("../helper/bcrypt");
 
