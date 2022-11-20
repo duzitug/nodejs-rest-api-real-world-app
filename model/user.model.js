@@ -12,19 +12,19 @@ module.exports = (sequelize, DataTypes) => {
       // Favorites
       this.belongsToMany(Article, {
         through: "user_article",
-        as: "favorites",
+        as: "Favorite",
         foreignKey: "user_id",
       });
 
       // Followers
       this.belongsToMany(User, {
         through: "user_user",
-        as: "followers",
+        as: "Follower",
         foreignKey: "user_id",
       });
       this.belongsToMany(User, {
         through: "user_user",
-        as: "following",
+        as: "Followee",
         foreignKey: "follower_id",
       });
     }
